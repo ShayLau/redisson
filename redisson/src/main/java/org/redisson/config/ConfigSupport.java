@@ -179,37 +179,59 @@ public class ConfigSupport {
         return yamlMapper.writeValueAsString(config);
     }
 
+    /**
+     * 创建连接管理
+     *
+     * @param configCopy 配置
+     * @return
+     */
     public static ConnectionManager createConnectionManager(Config configCopy) {
         UUID id = UUID.randomUUID();
 
         if (configCopy.getMasterSlaveServersConfig() != null) {
+            //主从
             validate(configCopy.getMasterSlaveServersConfig());
             return new MasterSlaveConnectionManager(configCopy.getMasterSlaveServersConfig(), configCopy, id);
         } else if (configCopy.getSingleServerConfig() != null) {
+            //单机
             validate(configCopy.getSingleServerConfig());
             return new SingleConnectionManager(configCopy.getSingleServerConfig(), configCopy, id);
         } else if (configCopy.getSentinelServersConfig() != null) {
+            //哨兵
             validate(configCopy.getSentinelServersConfig());
             return new SentinelConnectionManager(configCopy.getSentinelServersConfig(), configCopy, id);
         } else if (configCopy.getClusterServersConfig() != null) {
+            //集群
             validate(configCopy.getClusterServersConfig());
             return new ClusterConnectionManager(configCopy.getClusterServersConfig(), configCopy, id);
         } else if (configCopy.getReplicatedServersConfig() != null) {
+            //
             validate(configCopy.getReplicatedServersConfig());
             return new ReplicatedConnectionManager(configCopy.getReplicatedServersConfig(), configCopy, id);
         } else if (configCopy.getConnectionManager() != null) {
+            //已定义配置服务器
             return configCopy.getConnectionManager();
         }else {
+            //未定义服务器配置
             throw new IllegalArgumentException("server(s) address(es) not defined!");
         }
     }
 
+    /**
+     * 单机服务器 连接池大小不能小于 24
+     * @param config
+     */
     private static void validate(SingleServerConfig config) {
         if (config.getConnectionPoolSize() < config.getConnectionMinimumIdleSize()) {
             throw new IllegalArgumentException("connectionPoolSize can't be lower than connectionMinimumIdleSize");
         }
     }
-    
+
+    /**
+     * 哨兵 主从 集群
+     * 校验 从连接池大小 主连接池大小 订阅连接池大小
+     * @param config
+     */
     private static void validate(BaseMasterSlaveServersConfig<?> config) {
         if (config.getSlaveConnectionPoolSize() < config.getSlaveConnectionMinimumIdleSize()) {
             throw new IllegalArgumentException("slaveConnectionPoolSize can't be lower than slaveConnectionMinimumIdleSize");

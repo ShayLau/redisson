@@ -39,7 +39,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
+ * 抽象 connection 管理
  * @author Nikita Koksharov
  *
  */

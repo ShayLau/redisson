@@ -65,13 +65,25 @@ public class MasterSlaveEntry {
     final AtomicBoolean active = new AtomicBoolean(true);
     
     final String sslHostname;
-    
+
+    /**
+     * master slave 入口
+     * 从 balance
+     * 写连接线程池
+     *
+     *
+     * @param connectionManager
+     * @param config
+     * @param sslHostname
+     */
     public MasterSlaveEntry(ConnectionManager connectionManager, MasterSlaveServersConfig config, String sslHostname) {
         this.connectionManager = connectionManager;
         this.config = config;
-
+        //从 balance
         slaveBalancer = new LoadBalancerManager(config, connectionManager, this);
+        //主-写连接线程池
         writeConnectionPool = new MasterConnectionPool(config, connectionManager, this);
+        //主-发布订阅线程池
         pubSubConnectionPool = new MasterPubSubConnectionPool(config, connectionManager, this);
 
         this.sslHostname = sslHostname;
@@ -104,17 +116,26 @@ public class MasterSlaveEntry {
     
 
     public RFuture<RedisClient> setupMasterEntry(RedisURI address) {
+        //根据配置生成的 redis client
         RedisClient client = connectionManager.createClient(NodeType.MASTER, address, sslHostname);
         return setupMasterEntry(client);
     }
 
+    /**
+     *
+     * @param client
+     * @return
+     */
     private RFuture<RedisClient> setupMasterEntry(RedisClient client) {
         RPromise<RedisClient> result = new RedissonPromise<RedisClient>();
+
+        //有异常，关闭 redis client
         result.onComplete((res, e) -> {
             if (e != null) {
                 client.shutdownAsync();
             }
         });
+
         RFuture<InetSocketAddress> addrFuture = client.resolveAddr();
         addrFuture.onComplete((res, e) -> {
             if (e != null) {

@@ -115,6 +115,13 @@ public class PublishSubscribeService {
 
     private final LockPubSub lockPubSub = new LockPubSub(this);
 
+    /**
+     * 订阅链接服务
+     * ？？ 生成 50 个异步信号量，存储的是 AtomicInteger
+     *
+     * @param connectionManager 链接管理
+     * @param config
+     */
     public PublishSubscribeService(ConnectionManager connectionManager, MasterSlaveServersConfig config) {
         super();
         this.connectionManager = connectionManager;

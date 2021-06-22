@@ -61,6 +61,14 @@ public class IdleConnectionWatcher {
     private final Map<ClientConnectionsEntry, List<Entry>> entries = new ConcurrentHashMap<>();
     private final ScheduledFuture<?> monitorFuture;
 
+    /**
+     * ScheduledFuture 监控调度 feature
+     *
+     * 检测 redis 链接 是否长时间空闲，如果长时间空闲则异步关闭该链接，并记录日志
+     *
+     * @param manager
+     * @param config
+     */
     public IdleConnectionWatcher(ConnectionManager manager, MasterSlaveServersConfig config) {
         monitorFuture = manager.getGroup().scheduleWithFixedDelay(() -> {
             long currTime = System.nanoTime();

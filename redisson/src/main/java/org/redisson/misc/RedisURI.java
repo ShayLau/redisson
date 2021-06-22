@@ -20,7 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * 
+ * ？？是否支持 ipv6
  * @author Nikita Koksharov
  *
  */

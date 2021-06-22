@@ -59,7 +59,15 @@ public class RedisChannelInitializer extends ChannelInitializer<Channel> {
     private final Type type;
     private final ConnectionWatchdog connectionWatchdog;
     private final PingConnectionHandler pingConnectionHandler;
-    
+
+    /**
+     * redis 对应的 netty channel
+     * @param bootstrap
+     * @param config
+     * @param redisClient
+     * @param channels
+     * @param type
+     */
     public RedisChannelInitializer(Bootstrap bootstrap, RedisClientConfig config, RedisClient redisClient, ChannelGroup channels, Type type) {
         super();
         this.config = config;
@@ -73,7 +81,13 @@ public class RedisChannelInitializer extends ChannelInitializer<Channel> {
         }
         connectionWatchdog = new ConnectionWatchdog(bootstrap, channels, config.getTimer());
     }
-    
+
+    /**
+     * 初始化通道
+     *
+     * @param ch 通道
+     * @throws Exception
+     */
     @Override
     protected void initChannel(Channel ch) throws Exception {
         initSsl(config, ch);

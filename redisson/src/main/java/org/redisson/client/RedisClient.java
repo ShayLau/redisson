@@ -78,10 +78,21 @@ public final class RedisClient {
     private boolean hasOwnResolver;
     private volatile boolean shutdown;
 
+    /**
+     * 根据配置生成RedissonConfig 创建 RedisClient
+     *
+     * @param config
+     * @return
+     */
     public static RedisClient create(RedisClientConfig config) {
         return new RedisClient(config);
     }
-    
+
+    /**
+     * 生成 RedisClient
+     *
+     * @param config
+     */
     private RedisClient(RedisClientConfig config) {
         RedisClientConfig copy = new RedisClientConfig(config);
         if (copy.getTimer() == null) {
@@ -117,7 +128,9 @@ public final class RedisClient {
         }
         
         channels = new DefaultChannelGroup(copy.getGroup().next());
+        //netty bootstrap
         bootstrap = createBootstrap(copy, Type.PLAIN);
+        //pubsub netty bootstrap
         pubSubBootstrap = createBootstrap(copy, Type.PUBSUB);
         
         this.commandTimeout = copy.getCommandTimeout();
@@ -166,7 +179,12 @@ public final class RedisClient {
             throw new RedisConnectionException("Unable to connect to: " + uri, e);
         }
     }
-    
+
+    /**
+     * 返回 socket 地址
+     * ？？暂时不知何用
+     * @return
+     */
     public RFuture<InetSocketAddress> resolveAddr() {
         if (resolvedAddrFuture.get() != null) {
             return resolvedAddrFuture.get();

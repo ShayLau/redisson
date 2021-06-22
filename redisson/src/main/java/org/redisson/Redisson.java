@@ -52,6 +52,7 @@ public class Redisson implements RedissonClient {
     protected final QueueTransferService queueTransferService = new QueueTransferService();
     protected final EvictionScheduler evictionScheduler;
     protected final WriteBehindService writeBehindService;
+    //连接管理
     protected final ConnectionManager connectionManager;
     protected final CommandAsyncExecutor commandExecutor;
 
@@ -62,6 +63,7 @@ public class Redisson implements RedissonClient {
 
     protected Redisson(Config config) {
         this.config = config;
+        //copy 一份配置
         Config configCopy = new Config(config);
 
         connectionManager = ConfigSupport.createConnectionManager(configCopy);

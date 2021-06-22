@@ -60,6 +60,16 @@ public class LoadBalancerManager {
     
     private final Map<RedisClient, ClientConnectionsEntry> client2Entry = new ConcurrentHashMap<>();
 
+    /**
+     * load balance管理
+     *
+     * 从 连接线程池
+     * 发布订阅 连接线程池
+     *
+     * @param config
+     * @param connectionManager
+     * @param entry
+     */
     public LoadBalancerManager(MasterSlaveServersConfig config, ConnectionManager connectionManager, MasterSlaveEntry entry) {
         this.connectionManager = connectionManager;
         slaveConnectionPool = new SlaveConnectionPool(config, connectionManager, entry);
